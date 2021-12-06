@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/daniel-cy-lu/tinyapp/issues"
   },
-  "homepage": "https://github.com/daniel-cy-lu/tinyapp#readme"
+  "homepage": "https://github.com/daniel-cy-lu/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
