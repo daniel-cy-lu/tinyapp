@@ -15,6 +15,8 @@ const urlDatabase = {
   '9sm5xK' : 'http//www.google.com'
 };
 
+
+//Generate six rando strings
 function generateRandomString() {
   let random = (Math.random() + 1).toString(36).substring(1,7);
   return random;
@@ -22,8 +24,15 @@ function generateRandomString() {
 
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
-});
+        
+  
+  const random = generateRandomString();
+
+  urlDatabase[random] = req.body.longURL;
+  
+  res.redirect('http://localhost:8080/urls/' + random);   
+});  
+
 
 app.get('/', (req, res) => {
   res.send('Hello!');
