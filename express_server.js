@@ -31,6 +31,14 @@ app.post("/urls", (req, res) => {
   res.redirect('http://localhost:8080/urls/' + random);
 });
 
+app.post('/urls/:shortURL/delete', (req, res) => {
+  console.log(req.params);
+  const deleteShortURL = req.params.shortURL;
+  delete urlDatabase[deleteShortURL];
+
+  res.redirect('/urls');
+})
+
 //Ruotes using app.get:
 app.get('/', (req, res) => {
   res.send('Hello!');
