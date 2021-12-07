@@ -31,13 +31,24 @@ app.post("/urls", (req, res) => {
   res.redirect('http://localhost:8080/urls/' + random);
 });
 
-app.post('/urls/:shortURL/delete', (req, res) => {
+app.post('urls/:id', (req, res) => {
   console.log(req.params);
-  const deleteShortURL = req.params.shortURL;
-  delete urlDatabase[deleteShortURL];
+  editShortURLID = req.params.shortURL;
+  updatedLongURL = req.body.longURL;
+  urlDatabase[editShortURLID] = updatedLongURL;
 
   res.redirect('/urls');
 })
+
+app.post('/urls/:shortURL/delete', (req, res) => {
+  console.log(req.params);
+  const deleteShortURLID = req.params.shortURL;
+  delete urlDatabase[deleteShortURLID];
+
+  res.redirect('/urls');
+})
+
+
 
 //Ruotes using app.get:
 app.get('/', (req, res) => {
