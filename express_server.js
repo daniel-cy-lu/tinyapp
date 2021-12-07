@@ -1,7 +1,7 @@
+//Project Setup using express, bodyParser
 const express = require('express');
 const app = express();
 const PORT = 8080;
-
 //setup body-parser for POST request
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -16,14 +16,14 @@ const urlDatabase = {
 
 //Generate six rando strings
 const generateRandomString = function() {
-  let random = (Math.random() + 1).toString(36).substring(1,7);
+  let random = (Math.random() + 1).toString(36).substring(2,8);
   return random;
 };
 
 //POST request - executed after user enter url in /urls/new
 //It generate a random variable and saves it in urlDatabase then redirect user to /urls/(newly created link)
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
+  console.log(req.body);  
         
   const random = generateRandomString();
   urlDatabase[random] = req.body.longURL;
@@ -31,7 +31,7 @@ app.post("/urls", (req, res) => {
   res.redirect('http://localhost:8080/urls/' + random);
 });
 
-
+//Ruotes using app.get:
 app.get('/', (req, res) => {
   res.send('Hello!');
 });
