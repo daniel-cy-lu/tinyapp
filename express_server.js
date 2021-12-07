@@ -35,7 +35,6 @@ app.post("/urls", (req, res) => {
 app.get('/', (req, res) => {
   res.send('Hello!');
 });
-
 // Display the urlDatabase in string
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
@@ -70,4 +69,4 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
-});
+});   
