@@ -2,8 +2,14 @@ const express = require('express');
 const app = express();
 const PORT = 8080;
 
+//setup body-parser for POST request
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
+//setup ejs to render HTML 
 app.set('view engine', 'ejs');
 
+//setup id object - keys are short URL and values are long URL
 const urlDatabase = {
   'b2xVn2' : 'http://www.lighthouselabs.ca',
   '9sm5xK' : 'http//www.google.com'
