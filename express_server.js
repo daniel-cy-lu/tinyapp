@@ -73,6 +73,19 @@ app.post('/logout', (req, res) => {
   res.clearCookie('username');
   res.redirect('/urls');
 })
+
+//Register
+app.post('/register', (req, res) => {
+  const id = generateRandomString();
+  const userEmail = req.body.email;
+  const userPassword = req.body.password;
+  users.id = {};
+  users.id['id'] = id;
+  users.id['email'] = userEmail;
+  users.id['password'] = userPassword;
+  
+  res.redirect('/urls')
+})
  
 //Ruotes using app.get:
 app.get('/', (req, res) => {
