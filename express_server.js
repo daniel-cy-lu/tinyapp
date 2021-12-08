@@ -7,7 +7,7 @@ const PORT = 8080;
 
 //Middleware
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParse());
+app.use(cookieParser());
 app.set('view engine', 'ejs');
 
 //Storage - name and value pairs of short and long URL
@@ -51,9 +51,13 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 //Login
 app.post('/login', (req, res) => {
-  console.log(req.body);
-  const cookie = req.body.username;
+  res.cookie('username', req.body.username);
+  res.redirect('/urls');
+})
 
+//Logout
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');
   res.redirect('/urls');
 })
 
@@ -70,13 +74,14 @@ app.get('/hello', (req, res) => {
 
 //Index
 app.get('/urls', (req,res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase, username: req.cookies['username'] };
   res.render('urls_index', templateVars);
 });
 
 //Add
 app.get('/urls/new', (req,res) => {
-  res.render('urls_new');
+  const tempateVars = { username: req.cookies['username']};
+  res.render('urls_new', tempateVars);
 });
 
 //Visit LongURL
@@ -87,7 +92,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 //Show
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies['username'] };
   res.render("urls_show", templateVars);
 });
 
