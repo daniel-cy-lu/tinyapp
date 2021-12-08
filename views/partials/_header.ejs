@@ -17,7 +17,17 @@
       <button type="submit" class="btn btn-primary">Log Out</button>
     </div>
   </form>
-<% } else { %>
+<% } else if (id) { %>
+  <form class="form-inline" action="/logout" method="POST">
+    <div class="form-group mb-2">
+      <h1> Hello <%= id %> </h1>
+      
+      <button type="submit" class="btn btn-primary">Log Out</button>
+    </div>
+  </form>
+
+<% } else { %>  
+
   <form class="form-inline" action="/login" method="POST">
     <div class="form-group mb-2">
       <label for="username">Enter Username:</label>
