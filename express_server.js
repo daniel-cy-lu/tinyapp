@@ -32,7 +32,6 @@ app.post("/urls", (req, res) => {
 });
 
 app.post('/urls/:shortURL', (req, res) => {
-  console.log(req.params, req.body);
   editShortURLID = req.params.shortURL;
   updatedLongURL = req.body.longURL;
   urlDatabase[editShortURLID] = updatedLongURL;
