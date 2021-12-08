@@ -31,6 +31,13 @@ app.post("/urls", (req, res) => {
   res.redirect('http://localhost:8080/urls/' + random);
 });
 
+app.post('/login', (req, res) => {
+  console.log(req.body);
+  const cookie = req.body.username;
+
+  res.redirect('/urls');
+})
+
 app.post('/urls/:shortURL', (req, res) => {
   editShortURLID = req.params.shortURL;
   updatedLongURL = req.body.longURL;
