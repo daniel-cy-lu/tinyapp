@@ -84,7 +84,8 @@ app.post('/register', (req, res) => {
   users.id['email'] = userEmail;
   users.id['password'] = userPassword;
   
-  res.redirect('/urls')
+  res.cookie('user_id', id);
+  res.redirect('/urls');
 })
  
 //Ruotes using app.get:
