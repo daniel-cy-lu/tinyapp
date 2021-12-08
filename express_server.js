@@ -31,8 +31,8 @@ app.post("/urls", (req, res) => {
   res.redirect('http://localhost:8080/urls/' + random);
 });
 
-app.post('urls/:id', (req, res) => {
-  console.log(req.params);
+app.post('/urls/:shortURL', (req, res) => {
+  console.log(req.params, req.body);
   editShortURLID = req.params.shortURL;
   updatedLongURL = req.body.longURL;
   urlDatabase[editShortURLID] = updatedLongURL;
@@ -41,7 +41,7 @@ app.post('urls/:id', (req, res) => {
 })
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  console.log(req.params);
+  
   const deleteShortURLID = req.params.shortURL;
   delete urlDatabase[deleteShortURLID];
 
