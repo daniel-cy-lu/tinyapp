@@ -1,14 +1,16 @@
-//Project Setup using express, bodyParser
+//Project Setup using express, bodyParser, cookie-parser
 const express = require('express');
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
-//setup body-parser for POST request
 
+//Middleware
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParse());
 app.set('view engine', 'ejs');
 
-//setup id object - keys are short URL and values are long URL
+//Storage - name and value pairs of short and long URL
 const urlDatabase = {
   'b2xVn2' : 'http://www.lighthouselabs.ca',
   '9sm5xK' : 'http//www.google.com'
@@ -29,7 +31,7 @@ app.post("/urls", (req, res) => {
   res.redirect('http://localhost:8080/urls/' + random);
 });
 
-// Edit
+//Edit
 app.post('/urls/:shortURL', (req, res) => {
   const editShortURLID = req.params.shortURL;
   const updatedLongURL = req.body.longURL;
@@ -66,7 +68,7 @@ app.get('/hello', (req, res) => {
   res.send('<html><body>Hello <b>World</b><body></html>\n');
 });
 
-//Display urlDatabase in webpage, rendered
+//Index
 app.get('/urls', (req,res) => {
   const templateVars = { urls: urlDatabase };
   res.render('urls_index', templateVars);
@@ -77,15 +79,13 @@ app.get('/urls/new', (req,res) => {
   res.render('urls_new');
 });
 
-// a short/u/ brings user to long url via clicking on short url
+//Visit LongURL
 app.get("/u/:shortURL", (req, res) => {
-  console.log('urlDatabase',urlDatabase)
-  console.log('req.paramas',req.params)
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
 
-//display long url and short url pair
+//Show
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
