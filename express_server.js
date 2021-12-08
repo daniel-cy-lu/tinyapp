@@ -90,16 +90,18 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+//Register
+app.get("/register", (req, res) => {
+  res.render('urls_register');
+})
+
 //Show
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies['username'] };
   res.render("urls_show", templateVars);
 });
 
-//Register
-app.get("/register", (req, res) => {
-  res.render('urls_register')
-})
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
