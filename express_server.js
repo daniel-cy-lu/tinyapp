@@ -79,6 +79,24 @@ app.post('/register', (req, res) => {
   const id = generateRandomString();
   const userEmail = req.body.email;
   const userPassword = req.body.password;
+  const cookieID = req.cookies.user_id;
+  
+  //Error: if email or password is empty
+  if (!userEmail) {
+    res.send("Empty email: Error 400");
+  }
+  if (!userPassword) {
+    res.send("Empty password: Error 400");
+  }
+  //find if email and password exist in users storage
+  for (user in users) {
+    if (users[user].email === userEmail) {
+      res.send('Email already taken: Error 400');
+    }
+    if (users[user].password === userPassword) {
+      res.send('Password already taken: Error 400');
+    }
+  }
   users[id] = {};
   users[id]['id'] = id;
   users[id]['email'] = userEmail;
