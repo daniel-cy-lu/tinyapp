@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080;
@@ -10,6 +11,10 @@ const PORT = 8080;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set('view engine', 'ejs');
+app.use(cookieSession({
+  name: 'session',
+  keys: [/* secret keys */]
+}))
 
 //Storage - name and value pairs of short and long URL
 const urlDatabase = {
@@ -78,14 +83,14 @@ app.post("/urls", (req, res) => {
   
 
   const random = generateRandomString();
-  urlDatabase[random] = { longURL: req.body.longURL, userID: req.cookies.user_id }
+  urlDatabase[random] = { longURL: req.body.longURL, userID: req.session.user_id }
   
   res.redirect('http://localhost:8080/urls/' + random);
 });
 
 //Edit
 app.post('/urls/:shortURL', (req, res) => {
-  let newDatabase = urlsForUser(req.cookies.user_id)
+  let newDatabase = urlsForUser(req.session.user_id)
   if (!newDatabase[req.params.shortURL]) {
     res.send('You can only edit your own URL. Error: 400');
   }
@@ -99,7 +104,7 @@ app.post('/urls/:shortURL', (req, res) => {
 
 //Delete
 app.post('/urls/:shortURL/delete', (req, res) => {
-  let newDatabase = urlsForUser(req.cookies.user_id)
+  let newDatabase = urlsForUser(req.session.user_id)
   if (!newDatabase[req.params.shortURL]) {
     res.send('You can only delete your own URL. Error: 400');
   }
@@ -119,7 +124,7 @@ app.post('/login', (req, res) => {
     res.send('Username is not found, please register first. Error:403')
   }
   if (emailAlreadyExist(userEmail) && bcrypt.compareSync(userPassword, users[id].password)) {
-    res.cookie('user_id', id);
+    req.session.user_id = id;
     res.redirect('/urls');
   } else {
     res.send('User Password is incorrect. Error: 403')
@@ -137,7 +142,7 @@ app.post('/register', (req, res) => {
   const id = generateRandomString();
   const userEmail = req.body.email;
   const userPassword = req.body.password;
-  const cookieID = req.cookies.user_id;
+  const cookieID = req.session.user_id;
   
   //Error: if email or password is empty
   if (!userEmail) {
@@ -158,7 +163,7 @@ app.post('/register', (req, res) => {
   users[id]['email'] = userEmail;
   users[id]['password'] = hashedPassword;
   console.log(users)
-  res.cookie('user_id', id);
+  req.session.user_id = id;
   res.redirect('/urls');
 })
  
@@ -175,12 +180,12 @@ app.get('/hello', (req, res) => {
 
 //Index
 app.get('/urls', (req,res) => {
-  if (!users[req.cookies.user_id]) {
+  if (!users[req.session.user_id]) {
     const tempateVars = { id: null, error: 'Please log in first. Error: 400'};
     res.render('urls_login', tempateVars);
   }
-  const userID = req.cookies['user_id'];
-  let newDatabase = urlsForUser(req.cookies.user_id);
+  const userID = req.session['user_id'];
+  let newDatabase = urlsForUser(req.session.user_id);
   const templateVars = { urls: newDatabase, id: users[userID].email };
   res.render('urls_index', templateVars);
 
@@ -188,11 +193,11 @@ app.get('/urls', (req,res) => {
 
 //Add
 app.get('/urls/new', (req,res) => {
-  if (!users[req.cookies.user_id]) {
+  if (!users[req.session.user_id]) {
     const tempateVars = { id: null, error: 'Please log in first. Error: 400'};
     res.render('urls_login', tempateVars);
   }
-  const userID = req.cookies['user_id'];
+  const userID = req.session['user_id'];
   if (users[userID]){
     const tempateVars = { id: users[userID].email};
     res.render('urls_new', tempateVars);
@@ -215,7 +220,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 //Register
 app.get("/register", (req, res) => {
-  const userID = req.cookies['user_id'];
+  const userID = req.session['user_id'];
   if (users[userID]){
     const tempateVars = { id: users[userID].email};
     res.render('urls_register', tempateVars);
@@ -227,7 +232,7 @@ app.get("/register", (req, res) => {
 
 //Login
 app.get("/login", (req, res) => {
-  const userID = req.cookies['user_id'];
+  const userID = req.session['user_id'];
   if (users[userID]){
     const tempateVars = { id: users[userID].email, error: null};
     res.render('urls_login', tempateVars);
@@ -239,7 +244,7 @@ app.get("/login", (req, res) => {
 
 //Show
 app.get("/urls/:shortURL", (req, res) => {
-  if (!users[req.cookies.user_id]) {
+  if (!users[req.session.user_id]) {
     const tempateVars = { id: null, error: 'Please log in first. Error: 400'};
     res.render('urls_login', tempateVars);
   }
@@ -248,10 +253,10 @@ app.get("/urls/:shortURL", (req, res) => {
     res.send('The short URL does not exist, please add a new one. Erorr: 400')
   }
 
-  if (!shortURLBelongUser(req.params.shortURL, req.cookies.user_id)) {
+  if (!shortURLBelongUser(req.params.shortURL, req.session.user_id)) {
     res.send('This short URL is not yours. Error: 400')
   }
-  const userID = req.cookies['user_id'];
+  const userID = req.session['user_id'];
   if (users[userID]) {
     const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, id: users[userID].email };
     res.render("urls_show", templateVars);
