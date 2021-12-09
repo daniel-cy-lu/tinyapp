@@ -86,13 +86,14 @@ app.post('/login', (req, res) => {
   const userEmail = req.body.email;
   const userPassword = req.body.password;
   const id = findIDFromEmail(userEmail);
-  if (emailAlreadyExist(!userEmail)) {
+  
+  if (!emailAlreadyExist(userEmail)) {
     res.send('Username is not found, please register first. Error:403')
   }
-  if (emailAlreadyExist(userEmail) && user[id].password !== userPassword) {
+  if (emailAlreadyExist(userEmail) && users[id].password !== userPassword) {
     res.send('User Password is incorrect. Error: 403')
   }
-  if (emailAlreadyExist(userEmail)) {
+  if (emailAlreadyExist(userEmail) && users[id].password === userPassword) {
     res.cookie('user_id', id);
     res.redirect('/urls');
   }
