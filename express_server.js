@@ -62,6 +62,14 @@ const showUserURL = function(user_id) {
     }
   }
   return newURLDatabase;
+};
+
+const shortURLBelongUser = function (url, user) {
+  if (urlDatabase[url].userID === user) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 //Add
@@ -191,6 +199,7 @@ app.get("/u/:shortURL", (req, res) => {
   if (!users[req.cookies.user_id]) {
     const tempateVars = { id: null, error: 'Please log in first. Error: 400'};
     res.render('urls_login', tempateVars);
+  
   
   if (!urlDatabase[req.params.shortURL]) {
     res.send('The short URL ID does not exist. Error: 400');
