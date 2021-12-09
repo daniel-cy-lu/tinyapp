@@ -152,6 +152,11 @@ app.get("/register", (req, res) => {
   res.render('urls_register');
 })
 
+//Login
+app.get("/login", (req, res) => {
+  res.render('urls_login');
+})
+
 //Show
 app.get("/urls/:shortURL", (req, res) => {
   const cookieID = req.cookies.user_id;
