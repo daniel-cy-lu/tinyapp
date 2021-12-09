@@ -195,12 +195,7 @@ app.get('/urls/new', (req,res) => {
 });
 
 //Visit LongURL
-app.get("/u/:shortURL", (req, res) => {
-  if (!users[req.cookies.user_id]) {
-    const tempateVars = { id: null, error: 'Please log in first. Error: 400'};
-    res.render('urls_login', tempateVars);
-  
-  
+app.get("/u/:shortURL", (req, res) => { 
   if (!urlDatabase[req.params.shortURL]) {
     res.send('The short URL ID does not exist. Error: 400');
   }
@@ -235,8 +230,17 @@ app.get("/login", (req, res) => {
 
 //Show
 app.get("/urls/:shortURL", (req, res) => {
+  if (!users[req.cookies.user_id]) {
+    const tempateVars = { id: null, error: 'Please log in first. Error: 400'};
+    res.render('urls_login', tempateVars);
+  }
+  
   if (!urlDatabase[req.params.shortURL]) {
     res.send('The short URL does not exist, please add a new one. Erorr: 400')
+  }
+
+  if (!shortURLBelongUser(req.params.shortURL, req.cookies.user_id)) {
+    res.send('This short URL is not yours. Error: 400')
   }
   const userID = req.cookies['user_id'];
   if (users[userID]) {
