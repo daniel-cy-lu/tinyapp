@@ -178,12 +178,26 @@ app.get("/u/:shortURL", (req, res) => {
 
 //Register
 app.get("/register", (req, res) => {
-  res.render('urls_register');
+  const userID = req.cookies['user_id'];
+  if (users[userID]){
+    const tempateVars = { id: users[userID].email};
+    res.render('urls_register', tempateVars);
+  } else {
+    const tempateVars = { id: null};
+    res.render('urls_register', tempateVars);
+  }
 })
 
 //Login
 app.get("/login", (req, res) => {
-  res.render('urls_login');
+  const userID = req.cookies['user_id'];
+  if (users[userID]){
+    const tempateVars = { id: users[userID].email};
+    res.render('urls_login', tempateVars);
+  } else {
+    const tempateVars = { id: null};
+    res.render('urls_login', tempateVars);
+  }
 })
 
 //Show
