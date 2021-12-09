@@ -6,6 +6,8 @@ const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080;
+const { generateRandomString, getUserByEmail, urlsForUser, shortURLBelongUser } = require('./helpers');
+const {urlDatabase, users} = require('./storage');
 
 //Middleware
 app.use(bodyParser.urlencoded({extended: true}));
@@ -16,66 +18,6 @@ app.use(cookieSession({
   keys: ['1ws3rf']
 }))
 
-//Storage - name and value pairs of short and long URL
-const urlDatabase = {
-  'b2xVn2' : { longURL: 'http://www.lighthouselabs.ca', userID: "aJ481W"},
-  '9sm5xK' : { longURL: 'http//www.google.com', userID: 'aJ1122'}
-};
-
-const users = { 
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
-  },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
-  }
-}
-
-//Helper Function
-const generateRandomString = function() {
-  let random = (Math.random() + 1).toString(36).substring(2,8);
-  return random;
-};
-
-const emailAlreadyExist = function(email) {
-  for (user in users) {
-    if (users[user].email === email) {
-      return true;
-    } 
-  }
-  return false;
-}
-
-const getUserByEmail = function(email, database) {
-  for (user in database) {
-    if (database[user].email === email) {
-      return user;
-    }
-  }
-  return false;
-};
-
-const urlsForUser = function(id) {
-  let newURLDatabase = {};
-  for (let key in urlDatabase) {
-    if (urlDatabase[key].userID === id) {
-      newURLDatabase[key] = urlDatabase[key];
-    }
-  }
-  return newURLDatabase;
-};
-
-const shortURLBelongUser = function (url, user) {
-  if (urlDatabase[url].userID === user) {
-    return true;
-  } else {
-    return false;
-  }
-};
 
 //Add
 app.post("/urls", (req, res) => {
