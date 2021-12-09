@@ -35,6 +35,16 @@ const generateRandomString = function() {
   return random;
 };
 
+// true if email is in users storage
+const emailAlreadyExist = function(email) {
+  for (user in users) {
+    if (users[user].email === email) {
+      return true;
+    } 
+  }
+  return false;
+}
+
 //Add
 app.post("/urls", (req, res) => {
   
@@ -88,15 +98,13 @@ app.post('/register', (req, res) => {
   if (!userPassword) {
     res.send("Empty password: Error 400");
   }
-  //find if email and password exist in users storage
-  for (user in users) {
-    if (users[user].email === userEmail) {
-      res.send('Email already taken: Error 400');
-    }
-    if (users[user].password === userPassword) {
-      res.send('Password already taken: Error 400');
-    }
+  console.log(userEmail)
+  console.log(emailAlreadyExist());
+  //find if email exist in users storage
+  if (emailAlreadyExist(userEmail) === true) {
+    res.send('Email already taken: Error 400');
   }
+  
   users[id] = {};
   users[id]['id'] = id;
   users[id]['email'] = userEmail;
@@ -120,10 +128,11 @@ app.get('/hello', (req, res) => {
 //Index
 app.get('/urls', (req,res) => {
   const cookieID = req.cookies.user_id;
- 
   const templateVars = { urls: urlDatabase, username: req.cookies['username'], id: users[cookieID].email };
- 
   res.render('urls_index', templateVars);
+  
+  
+  
 });
 
 //Add
