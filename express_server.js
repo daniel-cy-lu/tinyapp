@@ -160,7 +160,7 @@ app.get('/urls', (req,res) => {
 
 //Add
 app.get('/urls/new', (req,res) => {
-  if (!req.cookies.user_id) {
+  if (!users[req.cookies.user_id]) {
     res.redirect('/login');
   }
   const userID = req.cookies['user_id'];
@@ -176,6 +176,10 @@ app.get('/urls/new', (req,res) => {
 
 //Visit LongURL
 app.get("/u/:shortURL", (req, res) => {
+  if (!urlDatabase[req.params.shortURL]) {
+    res.send('The short URL ID does not exist. Error: 400');
+  }
+  
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
