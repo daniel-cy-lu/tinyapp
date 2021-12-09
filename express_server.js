@@ -206,6 +206,9 @@ app.get("/login", (req, res) => {
 
 //Show
 app.get("/urls/:shortURL", (req, res) => {
+  if (!urlDatabase[req.params.shortURL]) {
+    res.send('The short URL does not exist, please add a new one. Erorr: 400')
+  }
   const userID = req.cookies['user_id'];
   if (users[userID]) {
     const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, id: users[cookieID].email };
