@@ -98,8 +98,7 @@ app.post('/register', (req, res) => {
   if (!userPassword) {
     res.send("Empty password: Error 400");
   }
-  console.log(userEmail)
-  console.log(emailAlreadyExist());
+  
   //find if email exist in users storage
   if (emailAlreadyExist(userEmail) === true) {
     res.send('Email already taken: Error 400');
