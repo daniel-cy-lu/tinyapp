@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080;
 
@@ -152,10 +153,11 @@ app.post('/register', (req, res) => {
     res.send('Email already taken: Error 400');
   }
   
+  const hashedPassword = bcrypt.hashSync(userPassword, 10);
   users[id] = {};
   users[id]['id'] = id;
   users[id]['email'] = userEmail;
-  users[id]['password'] = userPassword;
+  users[id]['password'] = hashedPassword;
   
   res.cookie('user_id', id);
   res.redirect('/urls');
