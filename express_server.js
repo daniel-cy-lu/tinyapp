@@ -61,6 +61,7 @@ const showUserURL = function(user_id) {
       newURLDatabase[key] = urlDatabase[key];
     }
   }
+  return newURLDatabase;
 }
 
 //Add
@@ -161,6 +162,7 @@ app.get('/urls', (req,res) => {
     const tempateVars = { id: null, error: 'Please log in first. Error: 400'};
     res.render('urls_login', tempateVars);
   }
+  const userID = req.cookies['user_id'];
   let newDatabase = showUserURL(req.cookies.user_id);
   const templateVars = { urls: newDatabase, id: users[userID].email };
   res.render('urls_index', templateVars);
@@ -208,8 +210,13 @@ app.get("/register", (req, res) => {
 //Login
 app.get("/login", (req, res) => {
   const userID = req.cookies['user_id'];
-  const tempateVars = { id: users[userID].email};
-  res.render('urls_login', tempateVars);
+  if (users[userID]){
+    const tempateVars = { id: users[userID].email, error: null};
+    res.render('urls_login', tempateVars);
+  } else {
+    const tempateVars = { id: null, error: null};
+    res.render('urls_login', tempateVars);
+  }
 })
 
 //Show
@@ -219,7 +226,7 @@ app.get("/urls/:shortURL", (req, res) => {
   }
   const userID = req.cookies['user_id'];
   if (users[userID]) {
-    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, id: users[cookieID].email };
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, id: users[userID].email };
     res.render("urls_show", templateVars);
   } else {
     const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, id: null };
