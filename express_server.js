@@ -45,6 +45,15 @@ const emailAlreadyExist = function(email) {
   return false;
 }
 
+const findIDFromEmail = function(email) {
+  for (user in users) {
+    if (users[user].email === email) {
+      return user;
+    }
+  }
+  return false;
+}
+
 //Add
 app.post("/urls", (req, res) => {
   
@@ -74,8 +83,19 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 //Login
 app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect('/urls');
+  const userEmail = req.body.email;
+  const userPassword = req.body.password;
+  const id = findIDFromEmail(userEmail);
+  if (emailAlreadyExist(!userEmail)) {
+    res.send('Username is not found, please register first. Error:403')
+  }
+  if (emailAlreadyExist(userEmail) && user[id].password !== userPassword) {
+    res.send('User Password is incorrect. Error: 403')
+  }
+  if (emailAlreadyExist(userEmail)) {
+    res.cookie('user_id', id);
+    res.redirect('/urls');
+  }
 })
 
 //Logout
