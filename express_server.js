@@ -148,6 +148,9 @@ app.get('/hello', (req, res) => {
 
 //Index
 app.get('/urls', (req,res) => {
+  if (!users[req.cookies.user_id]) {
+    res.send('Please login first.');
+  }
   const userID = req.cookies['user_id'];
   if (users[userID]){
     const templateVars = { urls: urlDatabase, id: users[userID].email };
