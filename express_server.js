@@ -54,10 +54,10 @@ const findIDFromEmail = function(email) {
   return false;
 };
 
-const showUserURL = function(user_id) {
+const urlsForUser = function(id) {
   let newURLDatabase = {};
   for (let key in urlDatabase) {
-    if (urlDatabase[key].userID === user_id) {
+    if (urlDatabase[key].userID === id) {
       newURLDatabase[key] = urlDatabase[key];
     }
   }
@@ -70,6 +70,10 @@ const shortURLBelongUser = function (url, user) {
   } else {
     return false;
   }
+};
+
+const urlsForUser = function (id) {
+
 }
 
 //Add
@@ -171,7 +175,7 @@ app.get('/urls', (req,res) => {
     res.render('urls_login', tempateVars);
   }
   const userID = req.cookies['user_id'];
-  let newDatabase = showUserURL(req.cookies.user_id);
+  let newDatabase = urlsForUser(req.cookies.user_id);
   const templateVars = { urls: newDatabase, id: users[userID].email };
   res.render('urls_index', templateVars);
 
