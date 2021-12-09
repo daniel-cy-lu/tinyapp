@@ -1,7 +1,7 @@
 //Project Setup using express, bodyParser, cookie-parser
 const express = require('express');
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
+//const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 const app = express();
@@ -9,11 +9,11 @@ const PORT = 8080;
 
 //Middleware
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+//app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.use(cookieSession({
   name: 'session',
-  keys: [/* secret keys */]
+  keys: ['1ws3rf']
 }))
 
 //Storage - name and value pairs of short and long URL
@@ -41,7 +41,6 @@ const generateRandomString = function() {
   return random;
 };
 
-// true if email is in users storage
 const emailAlreadyExist = function(email) {
   for (user in users) {
     if (users[user].email === email) {
@@ -51,9 +50,9 @@ const emailAlreadyExist = function(email) {
   return false;
 }
 
-const findIDFromEmail = function(email) {
-  for (user in users) {
-    if (users[user].email === email) {
+const getUserByEmail = function(email, database) {
+  for (user in database) {
+    if (database[user].email === email) {
       return user;
     }
   }
@@ -118,7 +117,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 app.post('/login', (req, res) => {
   const userEmail = req.body.email;
   const userPassword = req.body.password;
-  const id = findIDFromEmail(userEmail);
+  const id = getUserByEmail(userEmail, users);
   
   if (!emailAlreadyExist(userEmail)) {
     res.send('Username is not found, please register first. Error:403')
@@ -133,7 +132,7 @@ app.post('/login', (req, res) => {
 
 //Logout
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  req.session.user_id = null;
   res.redirect('/urls');
 })
 
