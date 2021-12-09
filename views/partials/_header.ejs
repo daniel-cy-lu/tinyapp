@@ -11,15 +11,7 @@
         <a class="nav-item nav-link" href="/login">Login</a>
         <a class="nav-item nav-link" href="/register">Register</a>
         
-<% if (username) { %>
-  <form class="form-inline" action="/logout" method="POST">
-    <div class="form-group mb-2">
-      <h3> Hello <%= username %> </h3>
-      
-      <button type="submit" class="btn btn-primary">Log Out</button>
-    </div>
-  </form>
-<% } else if (id) { %>
+<% if (id) { %>
   <form class="form-inline" action="/logout" method="POST">
     <div class="form-group mb-2">
       <h3> Hello <%= id %> </h3>
@@ -27,13 +19,6 @@
     </div>
   </form>
 <% }  %>  
-
-  
-        
-        
-         
-        
-       
       </div>
     </div>
   </nav>

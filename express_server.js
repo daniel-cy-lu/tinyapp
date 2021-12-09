@@ -149,10 +149,10 @@ app.get('/hello', (req, res) => {
 app.get('/urls', (req,res) => {
   const userID = req.cookies['user_id'];
   if (users[userID]){
-    const templateVars = { urls: urlDatabase, username: req.cookies['username'], id: users[userID].email };
+    const templateVars = { urls: urlDatabase, id: users[userID].email };
   res.render('urls_index', templateVars);
   } else {
-    const templateVars = { urls: urlDatabase, username: req.cookies['username'], id: null };
+    const templateVars = { urls: urlDatabase, id: null };
     res.render('urls_index', templateVars);
   }
 });
@@ -161,10 +161,10 @@ app.get('/urls', (req,res) => {
 app.get('/urls/new', (req,res) => {
   const userID = req.cookies['user_id'];
   if (users[userID]){
-    const tempateVars = { username: req.cookies['username'], id: users[userID].email};
+    const tempateVars = { id: users[userID].email};
     res.render('urls_new', tempateVars);
   } else {
-    const tempateVars = { username: req.cookies['username'], id: null};
+    const tempateVars = { id: null};
     res.render('urls_new', tempateVars);
   }
   
@@ -190,10 +190,10 @@ app.get("/login", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const userID = req.cookies['user_id'];
   if (users[userID]) {
-    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies['username'], id: users[cookieID].email };
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], id: users[cookieID].email };
     res.render("urls_show", templateVars);
   } else {
-    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies['username'], id: null };
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], id: null };
     res.render("urls_show", templateVars);
   }
 });
