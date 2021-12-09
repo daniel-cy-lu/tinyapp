@@ -172,7 +172,8 @@ app.get('/urls', (req,res) => {
 //Add
 app.get('/urls/new', (req,res) => {
   if (!users[req.cookies.user_id]) {
-    res.redirect('/login');
+    const tempateVars = { id: null, error: 'Please log in first. Error: 400'};
+    res.render('urls_login', tempateVars);
   }
   const userID = req.cookies['user_id'];
   if (users[userID]){
