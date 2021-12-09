@@ -12,8 +12,8 @@ app.set('view engine', 'ejs');
 
 //Storage - name and value pairs of short and long URL
 const urlDatabase = {
-  'b2xVn2' : 'http://www.lighthouselabs.ca',
-  '9sm5xK' : 'http//www.google.com'
+  'b2xVn2' : { longURL: 'http://www.lighthouselabs.ca', userID: "aJ481W"},
+  '9sm5xK' : { longURL: 'http//www.google.com', userID: 'aJ1122'}
 };
 
 const users = { 
@@ -57,17 +57,18 @@ const findIDFromEmail = function(email) {
 //Add
 app.post("/urls", (req, res) => {
   
+
   const random = generateRandomString();
-  urlDatabase[random] = req.body.longURL;
+  urlDatabase[random] = { longURL: req.body.longURL, userID: req.cookies.user_id }
   
   res.redirect('http://localhost:8080/urls/' + random);
 });
 
 //Edit
 app.post('/urls/:shortURL', (req, res) => {
-  const editShortURLID = req.params.shortURL;
+  const shortURLID = req.params.shortURL;
   const updatedLongURL = req.body.longURL;
-  urlDatabase[editShortURLID] = updatedLongURL;
+  urlDatabase[shortURLID].longURL = updatedLongURL;
 
   res.redirect('/urls');
 })
@@ -175,7 +176,7 @@ app.get('/urls/new', (req,res) => {
 
 //Visit LongURL
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
@@ -207,10 +208,10 @@ app.get("/login", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const userID = req.cookies['user_id'];
   if (users[userID]) {
-    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], id: users[cookieID].email };
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, id: users[cookieID].email };
     res.render("urls_show", templateVars);
   } else {
-    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], id: null };
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, id: null };
     res.render("urls_show", templateVars);
   }
 });
