@@ -157,7 +157,7 @@ app.post('/register', (req, res) => {
   users[id]['id'] = id;
   users[id]['email'] = userEmail;
   users[id]['password'] = hashedPassword;
-  
+  console.log(users)
   res.cookie('user_id', id);
   res.redirect('/urls');
 })
