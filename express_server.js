@@ -127,11 +127,14 @@ app.get('/hello', (req, res) => {
 
 //Index
 app.get('/urls', (req,res) => {
-  const cookieID = req.cookies.user_id;
-  const templateVars = { urls: urlDatabase, username: req.cookies['username'], id: users[cookieID].email };
-  res.render('urls_index', templateVars);
   
+
+  const userID = req.cookies['user_id'];
   
+    const templateVars = { urls: urlDatabase, username: req.cookies['username'], id: users[userID].email };
+    res.render('urls_index', templateVars);
+  
+
   
 });
 
