@@ -72,10 +72,6 @@ const shortURLBelongUser = function (url, user) {
   }
 };
 
-const urlsForUser = function (id) {
-
-}
-
 //Add
 app.post("/urls", (req, res) => {
   
@@ -88,6 +84,11 @@ app.post("/urls", (req, res) => {
 
 //Edit
 app.post('/urls/:shortURL', (req, res) => {
+  let newDatabase = urlsForUser(req.cookies.user_id)
+  if (!newDatabase[req.params.shortURL]) {
+    res.send('You can only edit your own URL. Error: 400');
+  }
+  
   const shortURLID = req.params.shortURL;
   const updatedLongURL = req.body.longURL;
   urlDatabase[shortURLID].longURL = updatedLongURL;
@@ -97,7 +98,10 @@ app.post('/urls/:shortURL', (req, res) => {
 
 //Delete
 app.post('/urls/:shortURL/delete', (req, res) => {
-  
+  let newDatabase = urlsForUser(req.cookies.user_id)
+  if (!newDatabase[req.params.shortURL]) {
+    res.send('You can only delete your own URL. Error: 400');
+  }
   const deleteShortURLID = req.params.shortURL;
   delete urlDatabase[deleteShortURLID];
 
