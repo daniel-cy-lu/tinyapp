@@ -52,6 +52,15 @@ const findIDFromEmail = function(email) {
     }
   }
   return false;
+};
+
+const showUserURL = function(user_id) {
+  let newURLDatabase = {};
+  for (let key in urlDatabase) {
+    if (urlDatabase[key].userID === user_id) {
+      newURLDatabase[key] = urlDatabase[key];
+    }
+  }
 }
 
 //Add
@@ -149,16 +158,13 @@ app.get('/hello', (req, res) => {
 //Index
 app.get('/urls', (req,res) => {
   if (!users[req.cookies.user_id]) {
-    res.send('Please login first.');
+    const tempateVars = { id: null, error: 'Please log in first. Error: 400'};
+    res.render('urls_login', tempateVars);
   }
-  const userID = req.cookies['user_id'];
-  if (users[userID]){
-    const templateVars = { urls: urlDatabase, id: users[userID].email };
+  let newDatabase = showUserURL(req.cookies.user_id);
+  const templateVars = { urls: newDatabase, id: users[userID].email };
   res.render('urls_index', templateVars);
-  } else {
-    const templateVars = { urls: urlDatabase, id: null };
-    res.render('urls_index', templateVars);
-  }
+
 });
 
 //Add
@@ -202,13 +208,8 @@ app.get("/register", (req, res) => {
 //Login
 app.get("/login", (req, res) => {
   const userID = req.cookies['user_id'];
-  if (users[userID]){
-    const tempateVars = { id: users[userID].email};
-    res.render('urls_login', tempateVars);
-  } else {
-    const tempateVars = { id: null};
-    res.render('urls_login', tempateVars);
-  }
+  const tempateVars = { id: users[userID].email};
+  res.render('urls_login', tempateVars);
 })
 
 //Show
