@@ -58,7 +58,7 @@ app.post("/urls", (req, res) => {
 app.post('/urls/:shortURL', (req, res) => {
   const editShortURLID = req.params.shortURL;
   const updatedLongURL = req.body.longURL;
-  urlDatabase.editShortURLID = updatedLongURL;
+  urlDatabase[editShortURLID] = updatedLongURL;
 
   res.redirect('/urls');
 })
@@ -127,17 +127,26 @@ app.get('/hello', (req, res) => {
 //Index
 app.get('/urls', (req,res) => {
   const userID = req.cookies['user_id'];
-  const templateVars = { urls: urlDatabase, username: req.cookies['username'], id: users[userID].email };
+  if (users[userID]){
+    const templateVars = { urls: urlDatabase, username: req.cookies['username'], id: users[userID].email };
   res.render('urls_index', templateVars);
-
-  
+  } else {
+    const templateVars = { urls: urlDatabase, username: req.cookies['username'], id: null };
+    res.render('urls_index', templateVars);
+  }
 });
 
 //Add
 app.get('/urls/new', (req,res) => {
-  const cookieID = req.cookies.user_id;
-  const tempateVars = { username: req.cookies['username'], id: users[cookieID].email};
-  res.render('urls_new', tempateVars);
+  const userID = req.cookies['user_id'];
+  if (users[userID]){
+    const tempateVars = { username: req.cookies['username'], id: users[userID].email};
+    res.render('urls_new', tempateVars);
+  } else {
+    const tempateVars = { username: req.cookies['username'], id: null};
+    res.render('urls_new', tempateVars);
+  }
+  
 });
 
 //Visit LongURL
@@ -158,9 +167,14 @@ app.get("/login", (req, res) => {
 
 //Show
 app.get("/urls/:shortURL", (req, res) => {
-  const cookieID = req.cookies.user_id;
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies['username'], id: users[cookieID].email };
-  res.render("urls_show", templateVars);
+  const userID = req.cookies['user_id'];
+  if (users[userID]) {
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies['username'], id: users[cookieID].email };
+    res.render("urls_show", templateVars);
+  } else {
+    const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies['username'], id: null };
+    res.render("urls_show", templateVars);
+  }
 });
 
 
