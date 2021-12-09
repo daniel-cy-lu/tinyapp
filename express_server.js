@@ -188,6 +188,10 @@ app.get('/urls/new', (req,res) => {
 
 //Visit LongURL
 app.get("/u/:shortURL", (req, res) => {
+  if (!users[req.cookies.user_id]) {
+    const tempateVars = { id: null, error: 'Please log in first. Error: 400'};
+    res.render('urls_login', tempateVars);
+  
   if (!urlDatabase[req.params.shortURL]) {
     res.send('The short URL ID does not exist. Error: 400');
   }
