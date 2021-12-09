@@ -159,6 +159,9 @@ app.get('/urls', (req,res) => {
 
 //Add
 app.get('/urls/new', (req,res) => {
+  if (!req.cookies.user_id) {
+    res.redirect('/login');
+  }
   const userID = req.cookies['user_id'];
   if (users[userID]){
     const tempateVars = { id: users[userID].email};
