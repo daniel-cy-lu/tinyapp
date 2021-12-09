@@ -118,12 +118,11 @@ app.post('/login', (req, res) => {
   if (!emailAlreadyExist(userEmail)) {
     res.send('Username is not found, please register first. Error:403')
   }
-  if (emailAlreadyExist(userEmail) && users[id].password !== userPassword) {
-    res.send('User Password is incorrect. Error: 403')
-  }
-  if (emailAlreadyExist(userEmail) && users[id].password === userPassword) {
+  if (emailAlreadyExist(userEmail) && bcrypt.compareSync(userPassword, users[id].password)) {
     res.cookie('user_id', id);
     res.redirect('/urls');
+  } else {
+    res.send('User Password is incorrect. Error: 403')
   }
 })
 
