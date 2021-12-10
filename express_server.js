@@ -46,10 +46,8 @@ const users = {
 
 //Add
 app.post("/urls", (req, res) => {
-  
   const random = generateRandomString();
   urlDatabase[random] = { longURL: req.body.longURL, userID: req.session.user_id };
-  
   res.redirect('http://localhost:8080/urls/' + random);
 });
 
@@ -59,11 +57,9 @@ app.post('/urls/:shortURL', (req, res) => {
   if (!newDatabase[req.params.shortURL]) {
     res.send('You can only edit your own URL. Error: 400');
   }
-  
   const shortURLID = req.params.shortURL;
   const updatedLongURL = req.body.longURL;
   urlDatabase[shortURLID].longURL = updatedLongURL;
-
   res.redirect('/urls');
 });
 
@@ -75,7 +71,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   }
   const deleteShortURLID = req.params.shortURL;
   delete urlDatabase[deleteShortURLID];
-
   res.redirect('/urls');
 });
 
@@ -84,7 +79,6 @@ app.post('/login', (req, res) => {
   const userEmail = req.body.email;
   const userPassword = req.body.password;
   const id = getUserByEmail(userEmail, users);
-  
   if (!emailAlreadyExist(userEmail, users)) {
     res.send('Username is not found, please register first. Error:403');
   }
@@ -107,19 +101,15 @@ app.post('/register', (req, res) => {
   const id = generateRandomString();
   const userEmail = req.body.email;
   const userPassword = req.body.password;
-  
   if (!userEmail) {
     res.send("Empty email: Error 400");
   }
   if (!userPassword) {
     res.send("Empty password: Error 400");
   }
-  
-  //find if email exist in users storage
   if (emailAlreadyExist(userEmail, users) === true) {
     res.send('Email already taken: Error 400');
   }
-  
   const hashedPassword = bcrypt.hashSync(userPassword, 10);
   users[id] = {};
   users[id]['id'] = id;
@@ -178,7 +168,6 @@ app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
     res.send('The short URL ID does not exist. Error: 400');
   }
-  
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
@@ -213,11 +202,9 @@ app.get("/urls/:shortURL", (req, res) => {
     const tempateVars = { id: null, error: 'Please log in first. Error: 400'};
     res.render('urls_login', tempateVars);
   }
-  
   if (!urlDatabase[req.params.shortURL]) {
     res.send('The short URL does not exist, please add a new one. Erorr: 400');
   }
-
   if (!shortURLBelongUser(req.params.shortURL, req.session.user_id, urlDatabase)) {
     res.send('This short URL is not yours. Error: 400');
   }

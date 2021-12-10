@@ -3,23 +3,19 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-
     <title>New URL - TinyApp Example</title>
     <% if (error) { %>
     <%= error %>
     <% } %>
   </head>
-
   <body>
 <%- include('partials/_header') %>
 <form action ="/login" method='POST'>
   <h3>Welcome to the Login Page!</h3>
   <label>Enter E-mail</label>
   <input type= 'email' name= 'email' placeholder="example@example.com">
-
   <label>Enter Password</label>
   <input type= 'password' name= 'password' placeholder="enter password">
   <button type='submit'>Login</button>
