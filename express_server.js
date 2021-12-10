@@ -1,55 +1,61 @@
-//Project Setup using express, bodyParser, cookie-parser
+//
+//Setup
+//
 const express = require('express');
 const bodyParser = require("body-parser");
-//const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
+const { generateRandomString, getUserByEmail, urlsForUser, shortURLBelongUser, emailAlreadyExist } = require('./helpers');
 const app = express();
 const PORT = 8080;
-const { generateRandomString, getUserByEmail, urlsForUser, shortURLBelongUser, emailAlreadyExist } = require('./helpers');
 
-
-
+//
 //Middleware
+//
 app.use(bodyParser.urlencoded({extended: true}));
-//app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.use(cookieSession({
   name: 'session',
   keys: ['1ws3rf']
-}))
+}));
 
+//
 //Storage - name and value pairs of short and long URL
+//
 const urlDatabase = {
   'b2xVn2' : { longURL: 'http://www.lighthouselabs.ca', userID: "aJ481W"},
   '9sm5xK' : { longURL: 'http//www.google.com', userID: 'aJ1122'}
 };
 
-const users = { 
+const users = {
   "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
+    id: "userRandomID",
+    email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
   }
-}
+};
+
+//
+//POST
+//
 
 //Add
 app.post("/urls", (req, res) => {
   
   const random = generateRandomString();
-  urlDatabase[random] = { longURL: req.body.longURL, userID: req.session.user_id }
+  urlDatabase[random] = { longURL: req.body.longURL, userID: req.session.user_id };
   
   res.redirect('http://localhost:8080/urls/' + random);
 });
 
 //Edit
 app.post('/urls/:shortURL', (req, res) => {
-  let newDatabase = urlsForUser(req.session.user_id, urlDatabase)
+  let newDatabase = urlsForUser(req.session.user_id, urlDatabase);
   if (!newDatabase[req.params.shortURL]) {
     res.send('You can only edit your own URL. Error: 400');
   }
@@ -59,11 +65,11 @@ app.post('/urls/:shortURL', (req, res) => {
   urlDatabase[shortURLID].longURL = updatedLongURL;
 
   res.redirect('/urls');
-})
+});
 
 //Delete
 app.post('/urls/:shortURL/delete', (req, res) => {
-  let newDatabase = urlsForUser(req.session.user_id, urlDatabase)
+  let newDatabase = urlsForUser(req.session.user_id, urlDatabase);
   if (!newDatabase[req.params.shortURL]) {
     res.send('You can only delete your own URL. Error: 400');
   }
@@ -71,7 +77,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   delete urlDatabase[deleteShortURLID];
 
   res.redirect('/urls');
-})
+});
 
 //Login
 app.post('/login', (req, res) => {
@@ -80,30 +86,28 @@ app.post('/login', (req, res) => {
   const id = getUserByEmail(userEmail, users);
   
   if (!emailAlreadyExist(userEmail, users)) {
-    res.send('Username is not found, please register first. Error:403')
+    res.send('Username is not found, please register first. Error:403');
   }
   if (emailAlreadyExist(userEmail, users) && bcrypt.compareSync(userPassword, users[id].password)) {
     req.session.user_id = id;
     res.redirect('/urls');
   } else {
-    res.send('User Password is incorrect. Error: 403')
+    res.send('User Password is incorrect. Error: 403');
   }
-})
+});
 
 //Logout
 app.post('/logout', (req, res) => {
   req.session.user_id = null;
   res.redirect('/urls');
-})
+});
 
 //Register
 app.post('/register', (req, res) => {
   const id = generateRandomString();
   const userEmail = req.body.email;
   const userPassword = req.body.password;
-  const cookieID = req.session.user_id;
   
-  //Error: if email or password is empty
   if (!userEmail) {
     res.send("Empty email: Error 400");
   }
@@ -123,9 +127,13 @@ app.post('/register', (req, res) => {
   users[id]['password'] = hashedPassword;
   req.session.user_id = id;
   res.redirect('/urls');
-})
+});
  
-//Ruotes using app.get:
+//
+//GET
+//
+
+//Test
 app.get('/', (req, res) => {
   res.send('Hello!');
 });
@@ -142,11 +150,10 @@ app.get('/urls', (req,res) => {
     const tempateVars = { id: null, error: 'Please log in first. Error: 400'};
     res.render('urls_login', tempateVars);
   }
-  const userID = req.session['user_id'];
+  const userID = req.session.user_id;
   let newDatabase = urlsForUser(req.session.user_id, urlDatabase);
   const templateVars = { urls: newDatabase, id: users[userID].email };
   res.render('urls_index', templateVars);
-
 });
 
 //Add
@@ -156,7 +163,7 @@ app.get('/urls/new', (req,res) => {
     res.render('urls_login', tempateVars);
   }
   const userID = req.session['user_id'];
-  if (users[userID]){
+  if (users[userID]) {
     const tempateVars = { id: users[userID].email};
     res.render('urls_new', tempateVars);
   } else {
@@ -167,7 +174,7 @@ app.get('/urls/new', (req,res) => {
 });
 
 //Visit LongURL
-app.get("/u/:shortURL", (req, res) => { 
+app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
     res.send('The short URL ID does not exist. Error: 400');
   }
@@ -179,26 +186,26 @@ app.get("/u/:shortURL", (req, res) => {
 //Register
 app.get("/register", (req, res) => {
   const userID = req.session['user_id'];
-  if (users[userID]){
+  if (users[userID]) {
     const tempateVars = { id: users[userID].email};
     res.render('urls_register', tempateVars);
   } else {
     const tempateVars = { id: null};
     res.render('urls_register', tempateVars);
   }
-})
+});
 
 //Login
 app.get("/login", (req, res) => {
   const userID = req.session['user_id'];
-  if (users[userID]){
+  if (users[userID]) {
     const tempateVars = { id: users[userID].email, error: null};
     res.render('urls_login', tempateVars);
   } else {
     const tempateVars = { id: null, error: null};
     res.render('urls_login', tempateVars);
   }
-})
+});
 
 //Show
 app.get("/urls/:shortURL", (req, res) => {
@@ -208,11 +215,11 @@ app.get("/urls/:shortURL", (req, res) => {
   }
   
   if (!urlDatabase[req.params.shortURL]) {
-    res.send('The short URL does not exist, please add a new one. Erorr: 400')
+    res.send('The short URL does not exist, please add a new one. Erorr: 400');
   }
 
   if (!shortURLBelongUser(req.params.shortURL, req.session.user_id, urlDatabase)) {
-    res.send('This short URL is not yours. Error: 400')
+    res.send('This short URL is not yours. Error: 400');
   }
   const userID = req.session['user_id'];
   if (users[userID]) {
@@ -224,9 +231,7 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 });
 
-
-
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
-});   
+});
 
